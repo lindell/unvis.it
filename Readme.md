@@ -8,10 +8,9 @@ What the tool does is to try to capture the content of an article or blog post w
 
 For Unvis.it's 2nd birthday, I've decided to open source it. This will make it blatantly obvious that I am in *no way* a developer, and that the fact that this works is merely a fluke. 
 
-1. **There is no database** — because I find them hard to visualize and think about.
-2. **This is basically a repackaged Instapaper/Pocket/ReadLater/whatever** — you could say that
-3. **Horrible spaghetti code, awful comments! You're not a programmer** — yes, I know?
-4. **This error/vulnerability/hack can cause this** — please help me fix it!
+1. **This is basically a repackaged Instapaper/Pocket/ReadLater/whatever** — you could say that
+2. **Horrible spaghetti code, awful comments! You're not a programmer** — yes, I know?
+3. **This error/vulnerability/hack can cause this** — please help me fix it!
 
 
 ## The flow
@@ -20,15 +19,14 @@ A user will paste a link, or type unvis.it before the url in the address bar and
 
 - CURL will fetch the URL with a randomized webcrawler user agent, in order to not stand out in server logs.
 - The web page will then be parsed through PHP Readability (by Fivefilters.org) to remove ads and other stuff.
-- If the base64 sum of the url is NOT found as a .txt-file in the cache-folder, it will save it with that name and serve it.
-- If the base64 sum of the url IS found as a .txt-file in the cache folder: serve that file instead.
+- If the the url is NOT found in the DB under the hash-column, it will save it with that name and serve it.
+- If the url IS found: serve that file instead.
 - Now the user can share the link to the contents without providing traffic to stuff the user doesn't want to support.
 
 ## TODO
 Things I would like to do, but have very little knowledge in how to achieve. If anyone feels that they can and want to contribute, I would appreciate it a lot.
 
 * Use memcache to speed things up
-* Use MySQL instead of files
 * Consolidate URL-caching so that www. and trailing slashes don't create separate cache files
 * Rehost images on Imgur
 * Log debug output when Readability cannot find the main text
