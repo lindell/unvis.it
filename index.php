@@ -216,7 +216,7 @@ require_once 'uv/JSLikeHTMLElement.php';
 						</ul>
 					<p>Enjoy literally not feeding the trolls!</p>
 					<br>
-					<p style="text-align:center"> <a href="javascript:var orig%3Dlocation.href%3Blocation.replace(%27http://unvis.it/%27%2Borig)%3B" class="btn btn-sm btn-info">Drag <b>this</b> to your bookmarks bar to unvis.it any page</a></p>
+					<p style="text-align:center"> <a href="javascript:var orig%3Dlocation.href%3Bwindow.location.assign(%27http://unvis.it/%27%2Borig)%3B" class="btn btn-sm btn-info">Drag <b>this</b> to your bookmarks bar to unvis.it any page</a></p>
 					<hr>
 					<h2>Now: the same info in infographics</h2>
 					<p style="text-align:center;"><img src="/uv/img/unvisit-xplaind.png" alt="What's this, I don't even…" title="What's this, I don't even…" ></p>
