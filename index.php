@@ -73,14 +73,14 @@ require_once 'uv/JSLikeHTMLElement.php';
 
 					// User agent switcheroo
 					$UAstrings = array(
-						"User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+						"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
 						"Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)",
 						"Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)",
-						"Baiduspider+(+http://www.baidu.com/search/spider.htm)  "
+						"Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)"
 					);
 
 					$UAstring = $UAstrings[array_rand($UAstrings)];
-					$UAstring .= "\r\n";
+					$UAstring = "User-Agent: ".$UAstring."\r\n";
 
 					if ($_GET["u"]) {
 					
