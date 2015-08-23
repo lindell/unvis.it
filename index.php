@@ -1,7 +1,7 @@
 <?php
 if(!ob_start("ob_gzhandler")) ob_start(); //gzip-e-di-doo-da
 
-// Try to remove http:// from bookmarklet and direct links. 
+// Try to remove http:// from bookmarklet and direct links.
 $urlz = $_SERVER['REQUEST_URI'];
 $urlz = substr($urlz, 1);
 if (strpos($urlz, "unvis.") !== false) {header("Location: http://unvis.it", true, 303);}
@@ -70,30 +70,17 @@ require_once 'uv/JSLikeHTMLElement.php';
 			<div id="theContent" class="col-md-8">
 				<?php 
 					echo "Looks like we couldn't find the content ¯\_(ツ)_/¯";
-					// User agent switcheroo
-					$UAnum = Rand (0,3) ; 
 
-					switch ($UAnum) 
- 					{ 
- 					case 0: 
-						$UAstring = "User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)\r\n"; 
- 					break; 
- 
-					case 1: 
-				 		$UAstring = "Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)\r\n"; 
-					break; 
- 
- 					case 2: 
- 						$UAstring = "Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)\r\n"; 
- 					break; 
- 
- 					case 3: 
-	 					$UAstring = "Baiduspider+(+http://www.baidu.com/search/spider.htm)  \r\n"; 
- 					break;
-					
-					// If this works, many lolz acquired.
-					
-					} 
+					// User agent switcheroo
+					$UAstrings = array(
+						"User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+						"Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)",
+						"Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)",
+						"Baiduspider+(+http://www.baidu.com/search/spider.htm)  "
+					);
+
+					$UAstring = $UAstrings[array_rand($UAstrings)];
+					$UAstring .= "\r\n";
 
 					if ($_GET["u"]) {
 					
