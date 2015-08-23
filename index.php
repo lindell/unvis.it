@@ -41,18 +41,19 @@ require_once 'uv/JSLikeHTMLElement.php';
 	</script>
 </head>
 <body>
-	<?php if(!$urlz) { ?>
-	<p style="text-align:center">
-		<br>
-		<img src="/uv/img/icon_large.png" alt="unvis.it" title="unvis.it" style="width:150px;height:150px">
-		<br>
-	</p>
-	<?php } ?>
-
 	<div class="container">
 		<div id="head">
 			<div class="row">
-				<br>
+				<?php if(!$urlz) { ?>
+				<div class="col-md-12">
+					<p style="text-align:center">
+						<br>
+						<img src="/uv/img/icon_large.png" alt="unvis.it" title="unvis.it" style="width:150px;height:150px">
+						<br>
+						<br>
+					</p>
+				</div>
+				<?php } ?>
 				<div class="col-md-2"></div>
 				<div class="col-md-8" id="theInputForm">
 					<form class="form-inline">
@@ -180,24 +181,28 @@ require_once 'uv/JSLikeHTMLElement.php';
 			<div class="col-md-2"></div>
 	</div>
 
-		
-	</div>
-  	
-	
-	</div>
-	
 	<div id="footer">
 		<div class="container">
+			<?php if ($urlz) {?>
 			<div class="row">
 				<div class="col-md-2"></div>
-				<div class="col-md-8"><?php if ($urlz) {?><hr><?php }?><?php if ( $urlz) {?>
+				<div class="col-md-8">
+					<hr>
 					<small><em><b>Source:</b> <a href="https://linkonym.appspot.com/?http://<?php echo $urlz; ?>"><?php echo $urlz; ?></a></em></small>
 					<hr>
-					
+
 					<p style="text-align:center"><a href="/" class="btn btn-default" >What is unvis.it?</a></p>
-					<br><br><?php } else {?>
-					<?php //require_once('uv/ga/toplist.php');?>
-					
+					<br><br>
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+			<?php }?>
+
+			<?php if(!$urlz){ ?>
+			<div class="row">
+				<div class="col-md-2"></div>
+
+				<div class="col-md-8">
 					<h1 id="about">What is unvis.it?</h1>				
 					<p>Unvis.it is a tool to escape linkbaits, trolls, idiots and asshats. </p>
 					<p>What the tool does is to try to capture the content of an article or blog post without passing on your visit as a pageview. Effectively this means that you're not paying with your attention, so you can <strong>read and share</strong> the idiocy that it contains.</p>
@@ -216,15 +221,17 @@ require_once 'uv/JSLikeHTMLElement.php';
 					<br>
 					<p style="text-align:center"> <a href="javascript:var orig%3Dlocation.href%3Bwindow.location.assign(%27http://unvis.it/%27%2Borig)%3B" class="btn btn-sm btn-info">Drag <b>this</b> to your bookmarks bar to unvis.it any page</a></p>
 					<hr>
+				</div>
+				<div class="clearfix"></div>
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
 					<h2>Now: the same info in infographics</h2>
 					<p style="text-align:center;"><img src="/uv/img/unvisit-xplaind.png" alt="What's this, I don't even…" title="What's this, I don't even…" ></p>
-					<hr>
 					<br><br>
-					<?php } ?>
-					</div>
 				</div>
 				<div class="col-md-2"></div>
 			</div>
+			<?php } ?>
 		</div>
 	</div>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
