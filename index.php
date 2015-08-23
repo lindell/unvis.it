@@ -2,7 +2,6 @@
 if(!ob_start("ob_gzhandler")) ob_start(); //gzip-e-di-doo-da
 
 // Try to remove http:// from bookmarklet and direct links. 
-$urlz = $_GET['u'];
 $urlz = $_SERVER['REQUEST_URI'];
 $urlz = substr($urlz, 1);
 if (strpos($urlz, "unvis.") !== false) {header("Location: http://unvis.it", true, 303);}
