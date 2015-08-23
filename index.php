@@ -68,9 +68,7 @@ require_once 'uv/JSLikeHTMLElement.php';
 			if (!$cachevalue && $urlz){
 			?>
 			<div id="theContent" class="col-md-8">
-				<?php 
-					echo "Looks like we couldn't find the content ¯\_(ツ)_/¯";
-
+				<?php
 					// User agent switcheroo
 					$UAstrings = array(
 						"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
@@ -155,6 +153,9 @@ require_once 'uv/JSLikeHTMLElement.php';
 						$toCache .= $header.$content;
 						$toCache .= "</div>";
 						$db->cache($urlz,$toCache);
+					}
+					else{
+						echo "Looks like we couldn't find the content ¯\_(ツ)_/¯";
 					}
 				}else{
 				//echo "From cache:";
