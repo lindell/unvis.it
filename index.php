@@ -41,6 +41,14 @@ require_once 'uv/JSLikeHTMLElement.php';
 	</script>
 </head>
 <body>
+	<?php if(!$urlz) { ?>
+	<p style="text-align:center">
+		<br>
+		<img src="/uv/img/icon_large.png" alt="unvis.it" title="unvis.it" style="width:150px;height:150px">
+		<br>
+	</p>
+	<?php } ?>
+
 	<div class="container">
 		<div id="head">
 			<div class="row">
@@ -211,12 +219,7 @@ require_once 'uv/JSLikeHTMLElement.php';
 					<h2>Now: the same info in infographics</h2>
 					<p style="text-align:center;"><img src="/uv/img/unvisit-xplaind.png" alt="What's this, I don't even…" title="What's this, I don't even…" ></p>
 					<hr>
-					<p style="text-align:center">	
-						<img src="/uv/img/icon_large.png" alt="OMG LOGOTYPE" title="OMG LOGOTYPE" style="width:150px;height:150px">
-						<br><br><br>
-						<?php //<a href="http://www.lolontai.re"><img src="/uv/img/lulz.png" id="lulz" alt="Sir Lulz-a-Lot approves" title="Sir Lulz-a-Lot approves"></a>?>
-						<br><br><br><br><br><br><br><br>
-					</p>
+					<br><br>
 					<?php } ?>
 					</div>
 				</div>
