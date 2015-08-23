@@ -46,7 +46,6 @@ require_once 'uv/JSLikeHTMLElement.php';
 				<div class="col-md-8" id="theInputForm">
 					<form class="form-inline">
 					  <div class="form-group">
-					    <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
 					    <div class="input-group">
 					      <div class="input-group-addon"><a href="http://unvis.it" id="logo" ><strong>unvis.it/</strong></a> </div>
 					      <input class="form-control" type="text" name="u" id="uv" placeholder="Url you want to read without giving a pageview" value="<?php if ($urlz) { echo $urlz;} ?>" >
