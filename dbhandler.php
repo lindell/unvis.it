@@ -2,27 +2,25 @@
 
 class DBHandler {
 	protected $pdo;
-	
-	function __construct(){
-		
-		$this->pdo = new PDO('mysql:host=localhost;dbname=unvisit_korgen;charset=utf8', "user","password");
 
+	function __construct(){
+		$this->pdo = new PDO('mysql:host=localhost;dbname=unvisit_korgen;charset=utf8', "root", "");
 	}
-	
-	function read($hash){
-		$stmt = $this->pdo->prepare('SELECT body FROM cached WHERE hash = :hash');
-		$stmt->execute(array('hash' => $hash));
+
+	function read($url){
+		$stmt = $this->pdo->prepare('SELECT title, body FROM cached WHERE url = :url');
+		$stmt->execute(array('url' => $url));
 		foreach ($stmt as $row) {
-		    return $row[0];
+		    return array("title" => $row[0], "body" => $row[1]);
 		}
 		return null;
 	}
-	
-	function cache($hash, $body){
-		$stmt = $this->pdo->prepare("INSERT INTO cached (hash, body) VALUES (:hash, :body)");
-		$stmt->bindParam(':hash', $hash);
+
+	function cache($url, $title, $body){
+		$stmt = $this->pdo->prepare("INSERT INTO cached (url, title, body) VALUES (:url, :title, :body)");
+		$stmt->bindParam(':url', $url);
+		$stmt->bindParam(':title', $title);
 		$stmt->bindParam(':body', $body);
 		$stmt->execute();
 	}
-
 }

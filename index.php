@@ -1,23 +1,21 @@
 <?php
-if(!ob_start("ob_gzhandler")) ob_start(); //gzip-e-di-doo-da
+	if(!ob_start("ob_gzhandler")) ob_start(); //gzip-e-di-doo-da
 
-require_once 'uv/HelpFunctions.php';
+	require_once 'uv/HelpFunctions.php';
 
-// Try to remove http:// from bookmarklet and direct links.
-$urlz = $_SERVER['REQUEST_URI'];
-$urlz = substr($urlz, 1);
-$urlz = urlfix($urlz);
+	// Try to remove http:// from bookmarklet and direct links.
+	$urlz = $_SERVER['REQUEST_URI'];
+	$urlz = substr($urlz, 1);
+	$urlz = urlfix($urlz);
 
-if (strpos($urlz, "unvis.") !== false) {header("Location: http://unvis.it", true, 303);}
-if(strpos($urlz, "http:") !== false) {
-	$str = $urlz;
-	$str = preg_replace('#^https?:/#', '', $str);
-	header("Location: http://".$_SERVER['HTTP_HOST'].$str, true, 303); 
-}
+	if (strpos($urlz, "unvis.") !== false) {header("Location: http://unvis.it", true, 303);}
+	if(strpos($urlz, "http:") !== false) {
+		$str = $urlz;
+		$str = preg_replace('#^https?:/#', '', $str);
+		header("Location: http://".$_SERVER['HTTP_HOST'].$str, true, 303);
+	}
 
-use Readability\Readability;
-require_once 'uv/Readability.php';
-require_once 'uv/JSLikeHTMLElement.php';
+	require 'controller/cachecontroller.php';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -54,143 +52,27 @@ require_once 'uv/JSLikeHTMLElement.php';
 					      <input class="form-control" type="text" name="u" id="uv" placeholder="Url you want to read without giving a pageview" value="<?php if ($urlz) { echo $urlz;} ?>" >
 					    </div>
 					  </div>
-					 
+
 					</form>
-					
+
 					<hr>
 				</div>
 				<div class="col-md-2"></div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-md-2"><?php if ($urlz) { ?><a href="javascript:(function(){sq=window.sq=window.sq||{};if(sq.script){sq.again();}else{sq.bookmarkletVersion='0.3.0';sq.iframeQueryParams={host:'//squirt.io',userId:'8a94e519-7e9a-4939-a023-593b24c64a2f',};sq.script=document.createElement('script');sq.script.src=sq.iframeQueryParams.host+'/bookmarklet/frame.outer.js';document.body.appendChild(sq.script);}})();" class="btn btn-default btn-mini hidden-phone" style="position: relative;top: 20px;" id="squirt">Speed read this</a><?php } ?></div>
-			<?php
-			
-			include_once("dbhandler.php");
-			$db = new DBHandler();
-			$cachevalue = $db->read($urlz);
-			if (!$cachevalue && $urlz){
-			?>
-			<div id="theContent" class="col-md-8">
-				<?php
-					// User agent switcheroo
-					$UAstrings = array(
-						"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
-						"Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)",
-						"Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)",
-						"Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)"
-					);
-
-					$UAstring = $UAstrings[array_rand($UAstrings)];
-					$UAstring = "User-Agent: ".$UAstring."\r\n";
-
-					if ($_GET["u"]) {
-					
-
-					$url = urldecode($urlz);
-					
-					if (!preg_match('!^https?://!i', $url)) $url = 'http://'.$url;
-					
-					// Create a stream
-					$opts = array(
-					  'http'=>array(
-					    'method'=>"GET",
-					    'header'=>$UAstring
-					  )
-					);
-
-					$context = stream_context_create($opts);
-					$html = @file_get_contents($url, false, $context);
-					
-				}
- 
-					// PHP Readability works with UTF-8 encoded content. 
-					// If $html is not UTF-8 encoded, use iconv() or 
-					// mb_convert_encoding() to convert to UTF-8.
-
-					// If we've got Tidy, let's clean up input.
-					// This step is highly recommended - PHP's default HTML parser
-					// often does a terrible job and results in strange output.
-					if (function_exists('tidy_parse_string')) {
-						$tidy = tidy_parse_string($html, array(), 'UTF8');
-						$tidy->cleanRepair();
-						$html = $tidy->value;
-					}
-
-					// give it to Readability
-					$readability = new Readability($html, $url);
-
-					// print debug output? 
-					// useful to compare against Arc90's original JS version - 
-					// simply click the bookmarklet with FireBug's 
-					// console window open
-					$readability->debug = false;
-
-					// convert links to footnotes?
-					$readability->convertLinksToFootnotes = true;
-
-					// process it
-					$result = $readability->init();
-
-					// does it look like we found what we wanted?
-					if ($result) {
-						$header = "<h1>";
-						$header .= $readability->getTitle()->textContent;
-						$header .= "</h1><a href='http://unvis.it/". $urlz."' class='perma'>". $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']."</a>";
-						$header .=  "<hr>";
-						echo $header;
-						$content = $readability->getContent()->innerHTML;
-
-						// if we've got Tidy, let's clean it up for output
-						if (function_exists('tidy_parse_string')) {
-							$tidy = tidy_parse_string($content, 
-								array('indent'=>true, 'show-body-only'=>true), 
-								'UTF8');
-							$tidy->cleanRepair();
-							$content = $tidy->value;
-							$content = trim(preg_replace('/\s\s+/', ' ', $content));
-						}
-						
-						
-						echo $content;
-						$toCache = "<div id=\"theContent\" class=\"col-md-8\">";
-						$toCache .= $header.$content;
-						$toCache .= "</div>";
-						$db->cache($urlz,$toCache);
-					}
-					else{
-						echo "Looks like we couldn't find the content ¯\_(ツ)_/¯";
-					}
-				}else{
-				//echo "From cache:";
-				echo $cachevalue;
+		<?php
+			if($title && $body){
+				require("view/cacheview.php");
 			}
-			$fourohfour = False;
 		?>
-			</div>
-
-			<div class="col-md-2"></div>
 	</div>
-
-		
-	</div>
-  	
-	
-	</div>
-	
 	<div id="footer">
+		<?php if (!$urlz) {?>
 		<div class="container">
 			<div class="row">
 				<div class="col-md-2"></div>
-				<div class="col-md-8"><?php if ($urlz) {?><hr><?php }?><?php if ( $urlz) {?>
-					<small><em><b>Source:</b> <a href="https://linkonym.appspot.com/?http://<?php echo $urlz; ?>"><?php echo $urlz; ?></a></em></small>
-					<hr>
-					
-					<p style="text-align:center"><a href="/" class="btn btn-default" >What is unvis.it?</a></p>
-					<br><br><?php } else {?>
-					<?php //require_once('uv/ga/toplist.php');?>
-					
-					<h1 id="about">What is unvis.it?</h1>				
+				<div class="col-md-8">
+					<h1 id="about">What is unvis.it?</h1>
 					<p>Unvis.it is a tool to escape linkbaits, trolls, idiots and asshats. </p>
 					<p>What the tool does is to try to capture the content of an article or blog post without passing on your visit as a pageview. Effectively this means that you're not paying with your attention, so you can <strong>read and share</strong> the idiocy that it contains.</p>
 					<p><small>Now with a speed reading options from <a href="http://www.squirt.io/">Squirt</a>, so you can get dumbfounded quicker!</small></p>
@@ -211,18 +93,17 @@ require_once 'uv/JSLikeHTMLElement.php';
 					<h2>Now: the same info in infographics</h2>
 					<p style="text-align:center;"><img src="/uv/img/unvisit-xplaind.png" alt="What's this, I don't even…" title="What's this, I don't even…" ></p>
 					<hr>
-					<p style="text-align:center">	
+					<p style="text-align:center">
 						<img src="/uv/img/icon_large.png" alt="OMG LOGOTYPE" title="OMG LOGOTYPE" style="width:150px;height:150px">
 						<br><br><br>
 						<?php //<a href="http://www.lolontai.re"><img src="/uv/img/lulz.png" id="lulz" alt="Sir Lulz-a-Lot approves" title="Sir Lulz-a-Lot approves"></a>?>
 						<br><br><br><br><br><br><br><br>
 					</p>
-					<?php } ?>
-					</div>
 				</div>
-				<div class="col-md-2"></div>
 			</div>
+			<div class="col-md-2"></div>
 		</div>
+		<?php } ?>
 	</div>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
 	<script type="text/javascript" src="/uv/js/bootstrap.min.js"></script>
@@ -234,23 +115,23 @@ require_once 'uv/JSLikeHTMLElement.php';
 			theURL = decodeURIComponent(theURL);
 			$("#uv").val(theURL);
 		});
-		
+
 		$("#uv").click(function() {
 			$(this).select();
 		});
-		
+
 		function leSwitcheroo(){
 			var orig=$("#uv").val();
 			var urlz=location.host;
 			location.replace("http://"+urlz+"/"+orig);
 		};
-		
+
 		$("#uv").keyup(function(event){
 		    if(event.keyCode == 13){
   				leSwitcheroo()
 		    }
 		});
-		
+
 		$('.toplistLink a').on('click', function() {
 			var a_href = $(this).attr('href');
 			ga('send', 'event', 'toplist', 'click', a_href);
@@ -260,9 +141,5 @@ require_once 'uv/JSLikeHTMLElement.php';
 		});
 	});
 	</script>
-	
-	
-	
-
 </body>
 </html>
