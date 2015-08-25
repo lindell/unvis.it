@@ -3,6 +3,10 @@
     require_once 'uv/Readability.php';
     require_once 'uv/JSLikeHTMLElement.php';
 
+    $errors = array();
+    $title = "";
+    $body = "";
+
     include_once("dbhandler.php");
     $db = new DBHandler();
     $cache = $db->read($urlz);
@@ -34,53 +38,59 @@
             $html = @file_get_contents($url, false, $context);
         }
 
-        // PHP Readability works with UTF-8 encoded content.
-        // If $html is not UTF-8 encoded, use iconv() or
-        // mb_convert_encoding() to convert to UTF-8.
 
-        // If we've got Tidy, let's clean up input.
-        // This step is highly recommended - PHP's default HTML parser
-        // often does a terrible job and results in strange output.
-        if (function_exists('tidy_parse_string')) {
-            $tidy = tidy_parse_string($html, array(), 'UTF8');
-            $tidy->cleanRepair();
-            $html = $tidy->value;
-        }
+        if($html){
+            // PHP Readability works with UTF-8 encoded content.
+            // If $html is not UTF-8 encoded, use iconv() or
+            // mb_convert_encoding() to convert to UTF-8.
 
-        // give it to Readability
-        $readability = new Readability($html, $url);
-
-        // print debug output?
-        // useful to compare against Arc90's original JS version -
-        // simply click the bookmarklet with FireBug's
-        // console window open
-        $readability->debug = false;
-
-        // convert links to footnotes?
-        $readability->convertLinksToFootnotes = true;
-
-        // process it
-        $result = $readability->init();
-
-        // does it look like we found what we wanted?
-        if ($result) {
-            $title = $readability->getTitle()->textContent;
-            $body = $readability->getContent()->innerHTML;
-
-            // if we've got Tidy, let's clean it up for output
+            // If we've got Tidy, let's clean up input.
+            // This step is highly recommended - PHP's default HTML parser
+            // often does a terrible job and results in strange output.
             if (function_exists('tidy_parse_string')) {
-                $tidy = tidy_parse_string($body,
-                    array('indent'=>true, 'show-body-only'=>true),
-                    'UTF8');
+                $tidy = tidy_parse_string($html, array(), 'UTF8');
                 $tidy->cleanRepair();
-                $body = $tidy->value;
-                $body = trim(preg_replace('/\s\s+/', ' ', $body));
+                $html = $tidy->value;
             }
 
-            $db->cache($urlz, $title , $body);
+            // give it to Readability
+            $readability = new Readability($html, $url);
+
+            // print debug output?
+            // useful to compare against Arc90's original JS version -
+            // simply click the bookmarklet with FireBug's
+            // console window open
+            $readability->debug = false;
+
+            // convert links to footnotes?
+            $readability->convertLinksToFootnotes = true;
+
+            // process it
+            $result = $readability->init();
+
+            // does it look like we found what we wanted?
+            if ($result) {
+                $title = $readability->getTitle()->textContent;
+                $body = $readability->getContent()->innerHTML;
+
+                // if we've got Tidy, let's clean it up for output
+                if (function_exists('tidy_parse_string')) {
+                    $tidy = tidy_parse_string($body,
+                        array('indent'=>true, 'show-body-only'=>true),
+                        'UTF8');
+                    $tidy->cleanRepair();
+                    $body = $tidy->value;
+                    $body = trim(preg_replace('/\s\s+/', ' ', $body));
+                }
+
+                $db->cache($urlz, $title , $body);
+            }
+            else{
+                array_push($errors,"Looks like we couldn't find the content ¯\_(ツ)_/¯");
+            }
         }
         else{
-            echo "Looks like we couldn't find the content ¯\_(ツ)_/¯";
+            array_push($errors,"Looks like we couldn't load the webpage ¯\_(ツ)_/¯");
         }
     }
     else{
