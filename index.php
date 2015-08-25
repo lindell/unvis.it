@@ -15,6 +15,7 @@
 		header("Location: http://".$_SERVER['HTTP_HOST'].$str, true, 303);
 	}
 
+	// Handles the caching of both new and old pages.
 	require 'controller/cachecontroller.php';
 ?>
 <!DOCTYPE HTML>
@@ -61,9 +62,11 @@
 			</div>
 		</div>
 		<?php
+			//Show the error view if at least one error has occurred
 			if (count($errors) > 0) {
 				require("view/errorview.php");
 			}
+			//Show the cached page if it was loaded
 			if($title && $body){
 				require("view/cacheview.php");
 			}
@@ -71,6 +74,7 @@
 	</div>
 	<div id="footer">
 		<?php
+			//Show the frontpage if no caching of an url is requested
 			if (!$urlz) {
 				require("view/frontpageview.php");
 			}
